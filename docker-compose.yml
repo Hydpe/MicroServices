@@ -1,0 +1,83 @@
+services:
+
+  # -------------------------
+  # EUREKA SERVICE REGISTRY
+  # -------------------------
+  service-registry:
+    build: ./ServiceRegistry
+    container_name: service_registry
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  # -------------------------
+  # POSTGRES DATABASE
+  # -------------------------
+  postgres_db:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Hyder@014
+      POSTGRES_DB: studentdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # -------------------------
+  # STUDENT SERVICE
+  # -------------------------
+  student-service:
+    build: ./StudentService
+    container_name: student_service
+    depends_on:
+      - service-registry
+      - postgres_db
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8081"
+
+  # -------------------------
+  # AUTH SERVICE
+  # -------------------------
+  auth-service:
+    build: ./AuthService
+    container_name: auth_service
+    depends_on:
+      - service-registry
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8090:8090"
+
+  # -------------------------
+  # API GATEWAY
+  # -------------------------
+  api-gateway:
+    build: ./ApiGateway
+    container_name: api_gateway
+    depends_on:
+      - service-registry
+      - auth-service
+      - student-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+
+  # -------------------------
+  # FRONTEND (REACT + NGINX)
+  # -------------------------
+  frontend:
+    build: ./frontend
+    container_name: frontend_app
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:80"
+
+volumes:
+  pgdata:
