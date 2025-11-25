@@ -1,9 +1,9 @@
 services:
-
   # -------------------------
   # EUREKA SERVICE REGISTRY
   # -------------------------
   service-registry:
+    image: hyder014/service-registry:latest
     build: ./ServiceRegistry
     container_name: service_registry
     ports:
@@ -30,6 +30,7 @@ services:
   # STUDENT SERVICE
   # -------------------------
   student-service:
+    image: hyder014/student-service:latest
     build: ./StudentService
     container_name: student_service
     depends_on:
@@ -44,6 +45,7 @@ services:
   # AUTH SERVICE
   # -------------------------
   auth-service:
+    image: hyder014/auth-service:latest
     build: ./AuthService
     container_name: auth_service
     depends_on:
@@ -57,6 +59,7 @@ services:
   # API GATEWAY
   # -------------------------
   api-gateway:
+    image: hyder014/api-gateway:latest
     build: ./ApiGateway
     container_name: api_gateway
     depends_on:
@@ -72,6 +75,7 @@ services:
   # FRONTEND (REACT + NGINX)
   # -------------------------
   frontend:
+    image: hyder014/frontend:latest
     build: ./frontend
     container_name: frontend_app
     depends_on:
